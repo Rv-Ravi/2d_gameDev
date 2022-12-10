@@ -8,8 +8,7 @@
 #include "glm/gtc/type_ptr.hpp"
 #include <array>
 #include <vector>
-#define SWIDTH 720
-#define SHEIGHT 480
+#include <sstream>
 
 
 
@@ -30,23 +29,35 @@ namespace BOG {
 		glm::vec3 vertexNormal;
 	};
 
-
-	extern std::array<uint16_t, GLFW_KEY_LAST> keyState;
 	extern std::vector<vertexData> block;
 	extern std::vector<uint32_t >blockIndex;
 	extern std::vector<vertexData>square;
 	extern std::vector<uint32_t >squareIndex;
-	extern BOG::windowCreation* mainWindow;
-
-	extern void setColorBufer(fltPoint x, fltPoint y, fltPoint z, fltPoint a);
-
-	extern void keyEvents(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 	extern void glfwError(int id, const char* description);
-	
 
-	extern bool appInitialize();
 
+	class AppInit {
+	//members
+	public:
+		windowCreation* m_mainWindow = nullptr;
+
+	//constructor
+	public:
+		AppInit();
+		~AppInit();
+
+	//methods
+	public:
+		bool createWindow(const char* name, int32_t width, int32_t height, bool monitor = false);
+		static void ClrUpdtBufer(const glm::vec4& color);
+		void update(BOG::fltPoint dtime);
+	private:
+		void destryWindow();
+		bool glInitializer();
+	};
+
+	extern AppInit* initializeApp;
 }
 
 

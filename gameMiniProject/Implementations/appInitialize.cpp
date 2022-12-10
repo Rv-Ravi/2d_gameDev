@@ -79,66 +79,79 @@ namespace BOG {
 			0,2,3
 	};
 
-
-	std::array<uint16_t, GLFW_KEY_LAST> keyState = { 0 };
-	windowCreation* mainWindow = nullptr;
-
-	void setColorBufer(fltPoint x, fltPoint y, fltPoint z, fltPoint a) {
-		ErrCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-		ErrCheck(glClearDepth(1.0f));
-		ErrCheck(glClearColor(x, y, z, a));
-	}
-
-	void keyEvents(GLFWwindow* window, int key, int scancode, int action, int mods)
-	{
-		if (action == GLFW_PRESS || action == GLFW_RELEASE)
-			keyState[key] = action;
-	}
-
 	void glfwError(int id, const char* description)
 	{
 		std::cout << "(Error ID: " << id << ") = " << description << std::endl;
 	}
 
-	bool appInitialize()
+	AppInit::AppInit()
 	{
 		glfwSetErrorCallback(glfwError);
-		if (!glfwInit())
-		{
-			std::cerr << "Unable to initialize GLFW and its window context. Please check the code.\n";
-			return false;
-		}
-
+		glfwInit();
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	}
+	AppInit::~AppInit()
+	{
+		destryWindow();
+	}
+	bool AppInit::createWindow(const char* name, int32_t width, int32_t height, bool monitor)
+	{
+		m_mainWindow = new windowCreation();
+		bool rtnVal;
+		if(monitor)
+			rtnVal = m_mainWindow->createWindow(name, width, height, glfwGetPrimaryMonitor());
+		else
+			rtnVal = m_mainWindow->createWindow(name, width, height, nullptr);
 
-		mainWindow = new BOG::windowCreation("Application", SWIDTH, SHEIGHT);
-
-		if (!mainWindow->getWindow())
-		{
-			std::cerr << "Unable to create GLFW window.\n";
-			glfwTerminate();
-			return false;
-		}
-
-		glfwSetKeyCallback(BOG::mainWindow->getWindow(), keyEvents);
-		glfwMakeContextCurrent(BOG::mainWindow->getWindow());
+		glfwMakeContextCurrent(m_mainWindow->getWindow());
 		glfwSwapInterval(1);
+		rtnVal = glInitializer();
 
-
+		return rtnVal;
+	}
+	bool AppInit::glInitializer()
+	{
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
 			std::cerr << "Unable to initialize GLAD OPENGL. please check the code.\n";
-			glfwDestroyWindow(BOG::mainWindow->getWindow());
+			glfwDestroyWindow(m_mainWindow->getWindow());
 			glfwTerminate();
 			return false;
 		}
 
-		glfwSetFramebufferSizeCallback(BOG::mainWindow->getWindow(), [](GLFWwindow* window, int width, int height) {
+		glfwSetFramebufferSizeCallback(m_mainWindow->getWindow(), [](GLFWwindow* window, int width, int height) {
 			ErrCheck(glViewport(0, 0, width, height));
 			});
 		ErrCheck(glEnable(GL_DEPTH_TEST));
+
 		return true;
 	}
+	void AppInit::destryWindow()
+	{
+		if (m_mainWindow)
+			delete m_mainWindow;
+	}
+	void AppInit::ClrUpdtBufer(const glm::vec4& color) {
+		ErrCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+		ErrCheck(glClearColor(color.x, color.y, color.z, color.a));
+		ErrCheck(glClearDepth(1.f));
+	}
+
+	void AppInit::update(BOG::fltPoint dtime)
+	{
+		ClrUpdtBufer(glm::vec4(0.2f, 0.2f, 0.2f, 1.f));
+		std::stringstream title;
+		title << "Application with FPS - " << int32_t(1 / dtime);
+		glfwSetWindowTitle(m_mainWindow->getWindow(), title.str().c_str());
+		//Other update methods
+
+
+
+		glfwSwapBuffers(m_mainWindow->getWindow());
+		glfwPollEvents();
+	}
+
+	AppInit* initializeApp = new AppInit();
 }

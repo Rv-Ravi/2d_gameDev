@@ -90,26 +90,7 @@ namespace BOG {
 	}
 
 	void Camera::changeCam() {
-		if (BOG::keyState[GLFW_KEY_C] == 1 && BOG::keyState[GLFW_KEY_1] == 1)
-		{
-			BOG::currentCam = (int16_t(ms_camList.size()) - 1 >= 0)? ms_camList[0] : BOG::currentCam;
-		}
-		else if (BOG::keyState[GLFW_KEY_C] == 1 && BOG::keyState[GLFW_KEY_2] == 1)
-		{
-			BOG::currentCam = (int16_t(ms_camList.size()) - 2 >= 0) ? ms_camList[1] : BOG::currentCam;
-		}
-		else if (BOG::keyState[GLFW_KEY_C] == 1 && BOG::keyState[GLFW_KEY_3] == 1)
-		{
-			BOG::currentCam = (int16_t(ms_camList.size()) - 3 >= 0) ? ms_camList[2] : BOG::currentCam;
-		}
-		else if (BOG::keyState[GLFW_KEY_C] == 1 && BOG::keyState[GLFW_KEY_4] == 1)
-		{
-			BOG::currentCam = (int16_t(ms_camList.size()) - 4 >= 0) ? ms_camList[3] : BOG::currentCam;
-		}
-		else if (BOG::keyState[GLFW_KEY_C] == 1 && BOG::keyState[GLFW_KEY_5] == 1)
-		{
-			BOG::currentCam = (int16_t(ms_camList.size()) - 5 >= 0) ? ms_camList[4] : BOG::currentCam;
-		}
+
 	}
 
 	void Camera::calcViewProjMat()
@@ -124,19 +105,6 @@ namespace BOG {
 
 	void Camera::mvCam(BOG::fltPoint dtime)
 	{
-		if (BOG::keyState[GLFW_KEY_RIGHT] == 1)
-			m_camSpeed = lerp(dtime, m_camSpeed, m_camMaxVel * m_camX);
-		else if (BOG::keyState[GLFW_KEY_LEFT] == 1)
-			m_camSpeed = lerp(dtime, m_camSpeed, m_camMaxVel * -m_camX);
-		if (BOG::keyState[GLFW_KEY_RIGHT_SHIFT] == 1 && BOG::keyState[GLFW_KEY_UP] == 1)
-			m_camSpeed = lerp(dtime, m_camSpeed, m_camMaxVel * m_camY);
-		else if (BOG::keyState[GLFW_KEY_RIGHT_SHIFT] == 1 && BOG::keyState[GLFW_KEY_DOWN] == 1)
-			m_camSpeed = lerp(dtime, m_camSpeed, m_camMaxVel * -m_camY);
-		else
-			m_camSpeed = lerp(dtime, m_camSpeed, 0.f * m_camZ);
-
-
-		m_camPos += m_camSpeed * dtime;
 		calcViewMat();
 		calcViewProjMat();
 

@@ -12,18 +12,16 @@ namespace BOG
 	{
 	private:
 		GLFWwindow* m_window = nullptr;
-		const char* m_winName = "Application";
-		int32_t m_winWidth, m_winHeight;
 	public:
 		
-		windowCreation() = delete;
-		windowCreation(const char* name, int32_t width, int32_t height, bool primaryComp = false);
+		windowCreation() = default;
 		~windowCreation();
-
+	//methods
+	public:
+		bool createWindow(const char* name, int32_t width, int32_t height, GLFWmonitor* monitor);
 		void destroy();
-		GLFWwindow* getWindow();
-
-	private:
+		void setWinTitle(const char* name);
+		GLFWwindow* getWindow(); 
 	};
 
 }
