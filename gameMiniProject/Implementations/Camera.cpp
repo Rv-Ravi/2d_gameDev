@@ -11,7 +11,7 @@ namespace BOG {
 
 	Camera::Camera()
 		:m_camPos(0.f), m_camX(1.f, 0.f, 0.f), m_camY(0.f, 1.f, 0.f), m_camZ(0.f, 0.f, 1.f), m_camDir(-m_camZ),
-		m_right(16.f), m_left(0.f), m_top(9.f), m_bottom(0.f),
+		m_right(16.f), m_left(-16.f), m_top(9.f), m_bottom(-9.f),
 		m_viewMat(1.f), m_projMat(1.f), m_viewProjMat(1.f), m_camSpeed(0.f), m_zNear(0.01f), m_zFar(10.f)
 	{
 		if (ms_camList.size() == 0)
@@ -29,7 +29,7 @@ namespace BOG {
 
 	Camera::Camera(const glm::vec3& camPos, bool isOrhto)
 		:m_camPos(camPos), m_camX(1.f, 0.f, 0.f), m_camY(0.f, 1.f, 0.f), m_camZ(0.f, 0.f, 1.f), m_camDir(-m_camZ),
-		m_right(16.f), m_left(0.f), m_top(9.f), m_bottom(0.f),
+		m_right(16.f), m_left(-16.f), m_top(9.f), m_bottom(-9.f),
 		m_viewMat(1.f), m_projMat(1.f), m_viewProjMat(1.f), m_camSpeed(0.f), m_zNear(0.01f), m_zFar(10.f)
 	{
 		if (ms_camList.size() == 0)

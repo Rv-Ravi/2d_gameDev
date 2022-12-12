@@ -3,102 +3,18 @@
 
 namespace BOG {
 
-
-	bool getErrorLog(const char* func, const char* file, int line)
-	{
-		while (uint32_t error = glGetError())
-		{
-			std::cerr << "OpenGL Error: (" << error << "):" << file << ":" << line << ":" << func << std::endl;
-			return true;
-		}
-		return false;
-	}
-
-
-	std::vector<uint32_t> blockIndex =
-	{
-		//TOP
-		0,1,2,
-		0,2,3,
-		//BOTTOM
-		4,5,6,
-		4,6,7,
-		//FRONT
-		8,9,10,
-		8,10,11,
-		//BACK
-		12,13,14,
-		12,14,15,
-		//RIGHT
-		9,10,13,
-		10,14,13,
-		//LEFT
-		8,11,12,
-		11,15,12
-	};
-	std::vector<BOG::vertexData> block =
-	{   //POSITION	                   //COLOR					  //TEX-CO					//NORMAL
-		//TOP
-		{glm::vec3(-1.0f,1.0f,1.0f),   glm::vec3(1.0f,0.0f,0.0f),  glm::vec2(0.0f,1.0f),     glm::vec3(-0.33f,0.33f,0.33f)},
-		{glm::vec3(1.0f,1.0f,1.0f),	  glm::vec3(0.0f,1.0f,0.0f),  glm::vec2(0.0f,0.9f),	    glm::vec3(0.33f,0.33f,0.33f)},
-		{glm::vec3(1.0f,1.0f,-1.0f),	  glm::vec3(0.0f,0.0f,1.0f),  glm::vec2(1.0f,0.9f),	    glm::vec3(0.33f,0.33f,-0.33f)},
-		{glm::vec3(-1.0f,1.0f,-1.0f),  glm::vec3(1.0f,1.0f,1.0f),  glm::vec2(1.0f,1.0f),	    glm::vec3(-0.33f,0.33f,-0.33f)},
-
-		//BOTTOM
-		{glm::vec3(-1.0f,-1.0f,1.0f),  glm::vec3(1.0f,0.0f,0.0f),  glm::vec2(1.0f,0.0f),	    glm::vec3(0.0f)},
-		{glm::vec3(1.0f,-1.0f,1.0f),	  glm::vec3(0.0f,1.0f,0.0f),  glm::vec2(0.0f,0.0f),	    glm::vec3(0.0f)},
-		{glm::vec3(1.0f,-1.0f,-1.0f),  glm::vec3(0.0f,0.0f,1.0f),  glm::vec2(1.0f,0.0f),	    glm::vec3(0.0f)},
-		{glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec3(1.0f,1.0f,1.0f),  glm::vec2(0.0f,0.0f),	    glm::vec3(0.0f)},
-
-		//FRONT
-		{glm::vec3(-1.0f,1.0f,1.0f),   glm::vec3(1.0f,0.0f,0.0f),  glm::vec2(0.0f,1.0f),     glm::vec3(-0.33f,0.33f,0.33f)},
-		{glm::vec3(1.0f,1.0f,1.0f),	  glm::vec3(0.0f,1.0f,0.0f),  glm::vec2(1.0f,1.0f),	    glm::vec3(0.33f,0.33f,0.33f)},
-		{glm::vec3(1.0f,-1.0f,1.0f),	  glm::vec3(0.0f,0.0f,1.0f),  glm::vec2(1.0f,0.0f),	    glm::vec3(0.33f,-0.33f,0.33f)},
-		{glm::vec3(-1.0f,-1.0f,1.0f),  glm::vec3(1.0f,1.0f,1.0f),  glm::vec2(0.0f,0.0f),	    glm::vec3(-0.33f,-0.33f,0.33f)},
-
-		//BACK
-		{glm::vec3(-1.0f,1.0f,-1.0f),   glm::vec3(1.0f,0.0f,0.0f),  glm::vec2(1.0f,1.0f),        glm::vec3(-0.33f,0.33f,-0.33f)},
-		{glm::vec3(1.0f,1.0f,-1.0f),	   glm::vec3(0.0f,1.0f,0.0f),  glm::vec2(0.0f,1.0f),	    glm::vec3(0.33f,0.33f,-0.33f)},
-		{glm::vec3(1.0f,-1.0f,-1.0f),   glm::vec3(0.0f,0.0f,1.0f),  glm::vec2(0.0f,0.0f),	    glm::vec3(0.33f,-0.33f,-0.33f)},
-		{glm::vec3(-1.0f,-1.0f,-1.0f),  glm::vec3(1.0f,1.0f,1.0f),  glm::vec2(1.0f,0.0f),	    glm::vec3(-0.33f,-0.33f,-0.33f)}
-
-	};
-
-
-
-	std::vector<BOG::vertexData> square = {
-	{glm::vec3(-1.0f,-1.0f,0.0f),   glm::vec3(1.0f,1.0f,1.0f),  glm::vec2(0.0f,0.0f),     glm::vec3(0.f,0.f,1.f)},
-		{glm::vec3(1.0f,-1.0f,0.0f),	  glm::vec3(1.0f,1.0f,1.0f),  glm::vec2(1.0f,0.0f),	    glm::vec3(0.f,0.f,1.f)},
-		{glm::vec3(1.0f,1.0f,0.0f),	  glm::vec3(1.0f,1.0f,1.0f),  glm::vec2(1.0f,1.0f),	    glm::vec3(0.f,0.f,1.f)},
-		{glm::vec3(-1.0f,1.0f,0.0f),  glm::vec3(1.0f,1.0f,1.0f),  glm::vec2(0.0f,1.0f),	    glm::vec3(0.f,0.f,1.f)},
-
-	};
-
-	std::vector<uint32_t> squareIndex = {
-			0,1,2,
-			0,2,3
-	};
-
-	void glfwError(int id, const char* description)
-	{
-		std::cout << "(Error ID: " << id << ") = " << description << std::endl;
-	}
-
 	AppInit::AppInit()
 	{
-		glfwSetErrorCallback(glfwError);
-		glfwInit();
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		this->glfwInitilizer();
+		this->m_mainWindow = new windowCreation();
+		this->m_deltaTime = new delTime();
 	}
 	AppInit::~AppInit()
 	{
-		destryWindow();
+		this->destroy();
 	}
 	bool AppInit::createWindow(const char* name, int32_t width, int32_t height, bool monitor)
 	{
-		m_mainWindow = new windowCreation();
 		bool rtnVal;
 		if(monitor)
 			rtnVal = m_mainWindow->createWindow(name, width, height, glfwGetPrimaryMonitor());
@@ -108,8 +24,17 @@ namespace BOG {
 		glfwMakeContextCurrent(m_mainWindow->getWindow());
 		glfwSwapInterval(1);
 		rtnVal = glInitializer();
-
+		m_appScene = new AppScene();
 		return rtnVal;
+	}
+	void AppInit::createEventManager(EventManager* mngr)
+	{
+		if (mngr == nullptr)
+			this->m_mainWindow->m_evntMngr = new EventManager();
+		else
+			this->m_mainWindow->m_evntMngr = mngr;
+
+		m_mainWindow->setCallbacks();
 	}
 	bool AppInit::glInitializer()
 	{
@@ -128,10 +53,18 @@ namespace BOG {
 
 		return true;
 	}
-	void AppInit::destryWindow()
+	void AppInit::glfwInitilizer()
 	{
-		if (m_mainWindow)
-			delete m_mainWindow;
+		glfwSetErrorCallback(glfwError);
+		glfwInit();
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	}
+	void AppInit::destroy()
+	{
+		if (m_mainWindow) delete m_mainWindow;
+		if (m_deltaTime) delete m_deltaTime;
 	}
 	void AppInit::ClrUpdtBufer(const glm::vec4& color) {
 		ErrCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
@@ -139,17 +72,44 @@ namespace BOG {
 		ErrCheck(glClearDepth(1.f));
 	}
 
-	void AppInit::update(BOG::fltPoint dtime)
+	GLFWwindow* AppInit::getWindow() const
 	{
-		ClrUpdtBufer(glm::vec4(0.2f, 0.2f, 0.2f, 1.f));
-		std::stringstream title;
-		title << "Application with FPS - " << int32_t(1 / dtime);
-		glfwSetWindowTitle(m_mainWindow->getWindow(), title.str().c_str());
+		return m_mainWindow->getWindow();
+	}
+
+	//bool AppInit::isWinClose() const
+	//{
+	//	return glfwWindowShouldClose(m_mainWindow->getWindow());
+	//}
+
+	void AppInit::run()
+	{
+		
+		while (!glfwWindowShouldClose(m_mainWindow->getWindow()))
+		{
+			this->update();
+			this->checkEvent();
+		}
+			
+	}
+
+	void AppInit::update()
+	{
+		m_deltaTime->update();
+		BOG::fltPoint dtime = m_deltaTime->getFramTm();
+		this->ClrUpdtBufer(glm::vec4(0.2f, 0.2f, 0.2f, 1.f));
 		//Other update methods
 
-
+		m_appScene->sceneUpdate(dtime, m_mainWindow->m_evntMngr);
 
 		glfwSwapBuffers(m_mainWindow->getWindow());
+
+	}
+
+	void AppInit::checkEvent()
+	{
+		const double* val = m_mainWindow->m_evntMngr->getCurPos();
+		std::cout << val[0] << " " << val[1] << std::endl;
 		glfwPollEvents();
 	}
 

@@ -1,7 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "appInitialize.h"
+#include "AppDataStore.h"
 
 namespace BOG {
 

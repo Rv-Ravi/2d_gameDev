@@ -1,15 +1,16 @@
 #ifndef WINDOW_CREATION_H
 #define WINDOW_CREATION_H
 
-#include <iostream>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "EventManager.h"
 
 namespace BOG
 {
 
 	class windowCreation
 	{
+	//methods
+	public:
+		EventManager* m_evntMngr = nullptr;
 	private:
 		GLFWwindow* m_window = nullptr;
 	public:
@@ -21,7 +22,8 @@ namespace BOG
 		bool createWindow(const char* name, int32_t width, int32_t height, GLFWmonitor* monitor);
 		void destroy();
 		void setWinTitle(const char* name);
-		GLFWwindow* getWindow(); 
+		void setCallbacks();
+		GLFWwindow* getWindow() const; 
 	};
 
 }

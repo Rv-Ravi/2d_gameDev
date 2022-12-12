@@ -1,10 +1,8 @@
 #ifndef SHADER_PROGRAM_H
 #define SHADER_PROGRAM_H
 
-#include "appInitialize.h"
-#include <fstream>
-#include <sstream>
-#include <unordered_map>
+#include "AppDataStore.h"
+
 
 
 

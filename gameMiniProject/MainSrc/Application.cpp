@@ -16,20 +16,8 @@ int main()
 		exit(1);
 	}
 
-	BOG::fltPoint currFramTime = 0.f, preFramTime = 0.f, FramTimePeriod,chngVal = 42.f;
-
-	
-
-	while (!glfwWindowShouldClose(app->m_mainWindow->getWindow()))
-	{
-
-		currFramTime = glfwGetTime();
-		FramTimePeriod = currFramTime - preFramTime;
-		preFramTime = currFramTime;
-
-
-		app->update(FramTimePeriod);
-	}
+	app->createEventManager();
+	app->run();
 
 	return 0;
 }

@@ -1,7 +1,7 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include "appInitialize.h"
+#include "AppDataStore.h"
 
 namespace BOG {
 	class Mesh
@@ -41,7 +41,6 @@ namespace BOG {
 		void meshBind();
 		static void meshUnbind();
 	};
-
 }
 
 #endif //MESH_H

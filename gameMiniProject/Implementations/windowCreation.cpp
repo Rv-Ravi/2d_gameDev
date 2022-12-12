@@ -13,8 +13,14 @@ void BOG::windowCreation::setWinTitle(const char* name)
 	glfwSetWindowTitle(m_window, name);
 }
 
+void BOG::windowCreation::setCallbacks()
+{
+	glfwSetKeyCallback(m_window, m_evntMngr->setKeyState);
+	glfwSetMouseButtonCallback(m_window, m_evntMngr->setMouseState);
+	glfwSetCursorPosCallback(m_window, m_evntMngr->setCursorState);
+}
 
-GLFWwindow* BOG::windowCreation::getWindow()
+GLFWwindow* BOG::windowCreation::getWindow() const
 {
 	return m_window;
 }
