@@ -4,7 +4,7 @@
 
 #include "windowCreation.h"
 #include "deltaTime.h"
-#include "AppScene.h"
+#include "RenderSys.h"
 
 namespace BOG {
 
@@ -14,6 +14,7 @@ namespace BOG {
 		windowCreation* m_mainWindow = nullptr;
 		delTime* m_deltaTime = nullptr;
 		AppScene* m_appScene = nullptr;
+		RenderSys* m_appRenderer = nullptr;
 	//constructor
 	public:
 		AppInit();

@@ -1,7 +1,4 @@
-#include "../Headers/shaderProgram.h"
-#include "../Headers/Camera.h"
-#include "../Headers/Mesh.h"
-#include "../Headers/Transform.h"
+#include "../Headers/appInitialize.h"
 #include "stb/stb_image.h"
 
 

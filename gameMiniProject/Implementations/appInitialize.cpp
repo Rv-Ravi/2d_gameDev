@@ -25,6 +25,7 @@ namespace BOG {
 		glfwSwapInterval(1);
 		rtnVal = glInitializer();
 		m_appScene = new AppScene();
+		m_appRenderer = new RenderSys();
 		return rtnVal;
 	}
 	void AppInit::createEventManager(EventManager* mngr)
@@ -45,7 +46,7 @@ namespace BOG {
 			glfwTerminate();
 			return false;
 		}
-
+		
 		glfwSetFramebufferSizeCallback(m_mainWindow->getWindow(), [](GLFWwindow* window, int width, int height) {
 			ErrCheck(glViewport(0, 0, width, height));
 			});
@@ -100,7 +101,7 @@ namespace BOG {
 		this->ClrUpdtBufer(glm::vec4(0.2f, 0.2f, 0.2f, 1.f));
 		//Other update methods
 
-		m_appScene->sceneUpdate(dtime, m_mainWindow->m_evntMngr);
+		m_appRenderer->renderScene(m_appScene, dtime, m_mainWindow->m_evntMngr);
 
 		glfwSwapBuffers(m_mainWindow->getWindow());
 
@@ -108,8 +109,7 @@ namespace BOG {
 
 	void AppInit::checkEvent()
 	{
-		const double* val = m_mainWindow->m_evntMngr->getCurPos();
-		std::cout << val[0] << " " << val[1] << std::endl;
+		m_appScene->addTile(m_mainWindow->m_evntMngr);
 		glfwPollEvents();
 	}
 

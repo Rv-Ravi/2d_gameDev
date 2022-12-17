@@ -12,22 +12,23 @@ namespace BOG {
 	class AppScene
 	{
 		//members
-	private:
+	public:
 		std::vector<Entity> m_entityList;
 		Camera m_mainCamera;
 		BOG::Mesh tileMesh, blockMesh;
-		shaderProgram prog;
+		bool isCreated = false;
+		Entity* m_currentEntt = nullptr;
+		
 	//contructor
 	public:
 		AppScene();
 		~AppScene();
 
 	//methods
-	private:
-		void addTile(EventManager* evntMngr);
-
 	public:
 		void sceneUpdate(BOG::fltPoint dtime,EventManager* &evntMngr);
+		void addTile(EventManager* evntMngr);
+		void selectEntity(EventManager* evntMngr);
 	};
 
 }

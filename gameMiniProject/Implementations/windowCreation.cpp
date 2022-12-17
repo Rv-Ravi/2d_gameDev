@@ -15,9 +15,14 @@ void BOG::windowCreation::setWinTitle(const char* name)
 
 void BOG::windowCreation::setCallbacks()
 {
+
 	glfwSetKeyCallback(m_window, m_evntMngr->setKeyState);
 	glfwSetMouseButtonCallback(m_window, m_evntMngr->setMouseState);
 	glfwSetCursorPosCallback(m_window, m_evntMngr->setCursorState);
+	glfwSetWindowSizeCallback(m_window, m_evntMngr->setWindowState);
+
+
+
 }
 
 GLFWwindow* BOG::windowCreation::getWindow() const
@@ -30,6 +35,8 @@ bool BOG::windowCreation::createWindow(const char* name, int32_t width, int32_t 
 	m_window = glfwCreateWindow(width, height, name, monitor, nullptr);
 	if (!m_window)
 		return false;
+
+	m_evntMngr->setWindowState(m_window, width, height);
 	return true;
 }
 

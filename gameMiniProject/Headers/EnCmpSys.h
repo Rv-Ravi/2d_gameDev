@@ -2,6 +2,7 @@
 #define ENCMPSYS_H
 
 #include "Mesh.h"
+#include "Transform.h"
 
 namespace BOG {
 
@@ -22,10 +23,16 @@ namespace BOG {
 		glm::vec3 m_position = { 0.f,0.f,0.f };
 		glm::vec3 m_rotation = { 0.f,0.f,0.f };
 		glm::vec3 m_scale = { 1.f,1.f,1.f };
+
+		TransformComp(const glm::vec3& position = {0.f,0.f,0.f}) : m_position(position) {}
 	};
 
 	struct MaterialComp : public Component {
-		glm::vec3 m_Color = { 1.f,1.f,1.f };
+		glm::vec3 m_color = { 1.f,1.f,1.f };
+
+		MaterialComp(const glm::vec3& color)
+			:m_color(color)
+		{}
 	};
 
 	struct MeshComp : public Component {
@@ -43,9 +50,10 @@ namespace BOG {
 		std::string m_enName;
 		std::vector<Component*> m_enComponents;
 		enTag tagId = enTag::NONE;
+		bool isMesh = false;
 	//constructor
 	public:
-		Entity(const char* name = "Tile") {
+		Entity(const char* name = "Entity") {
 			m_enName = name;
 		}
 		~Entity() {
@@ -56,7 +64,6 @@ namespace BOG {
 	public:
 		void addComponent(Component* comp, BOG::compId id) {
 			std::vector<Component*>::iterator keyVal = std::find_if(m_enComponents.begin(), m_enComponents.end(), [&](Component* iteComp) {
-				std::cout << (comp->m_compId == iteComp->m_compId) << std::endl;
 					return comp->m_compId == iteComp->m_compId;
 				});
 
