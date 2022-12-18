@@ -13,15 +13,15 @@ void BOG::RenderSys::renderScene(AppScene* scene, BOG::fltPoint dtime, EventMana
 {
 	BOG::Transform transform;
 	scene->sceneUpdate(dtime, evntMngr);
-	for (auto entity : scene->m_entityList)
+	for (BOG::Entity& entity : scene->m_entityList)
 	{
 		MeshComp* comp1 = nullptr;
 		if (entity.isMesh)
 		{
 			
-			MeshComp* comp1 = (MeshComp*)entity.getComponent(0);
-			TransformComp* comp2 = (TransformComp*)entity.getComponent(1);
-			MaterialComp* comp3 = (MaterialComp*)entity.getComponent(2);
+			MeshComp* comp1 = (MeshComp*)entity.getComponent(BOG::compId::MESH);
+			TransformComp* comp2 = (TransformComp*)entity.getComponent(BOG::compId::TRANSFORM);
+			MaterialComp* comp3 = (MaterialComp*)entity.getComponent(BOG::compId::MATERIAL);
 			
 
 			comp1->m_mesh->meshBind();

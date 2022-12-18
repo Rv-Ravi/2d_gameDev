@@ -110,6 +110,7 @@ namespace BOG {
 	void AppInit::checkEvent()
 	{
 		m_appScene->addTile(m_mainWindow->m_evntMngr);
+		m_appScene->selectEntity(m_mainWindow->m_evntMngr);
 		glfwPollEvents();
 	}
 
