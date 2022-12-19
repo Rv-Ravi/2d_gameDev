@@ -2,7 +2,7 @@
 #define APPSCENE_H
 
 
-#include "EnCmpSys.h"
+#include "PhysicsEng.h"
 #include "Camera.h"
 #include "EventManager.h"
 #include "shaderProgram.h"
@@ -11,13 +11,18 @@ namespace BOG {
 
 	class AppScene
 	{
+	
 		//members
+	private:
+		static bool ms_gamePlay;
 	public:
 		std::vector<Entity> m_entityList;
 		Camera m_mainCamera;
 		BOG::Mesh tileMesh, blockMesh;
-		bool isCreated = false;
 		Entity* m_currentEntt = nullptr;
+
+	private:
+		bool isCreated = false;
 		
 	//contructor
 	public:
@@ -27,8 +32,16 @@ namespace BOG {
 	//methods
 	public:
 		void sceneUpdate(BOG::fltPoint dtime,EventManager* &evntMngr);
-		void addTile(EventManager* evntMngr);
-		void selectEntity(EventManager* evntMngr);
+		void addTile(EventManager*& evntMngr);
+		Entity* selectEntity(EventManager*& evntMngr);
+		static void setGamePlay(EventManager*& evntMngr);
+
+	private:
+		void mvEntity(BOG::fltPoint dtime, EventManager*& evntMngr);
+		void scaleEntity(BOG::fltPoint dtime, EventManager*& evntMngr);
+		void rotateEntity(BOG::fltPoint dtime, EventManager*& evntMngr);
+		void entityCheckCollision(BOG::fltPoint dtime);
+		void addEnttComponent(EventManager*& evntMngr);
 	};
 
 }

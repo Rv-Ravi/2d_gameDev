@@ -51,6 +51,9 @@
     <ClCompile Include="Implementations\RenderSys.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Implementations\PhysicsEng.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\appInitialize.h">
@@ -87,6 +90,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\RenderSys.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\PhysicsEng.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

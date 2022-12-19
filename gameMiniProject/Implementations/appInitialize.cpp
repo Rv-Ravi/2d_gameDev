@@ -101,6 +101,8 @@ namespace BOG {
 		this->ClrUpdtBufer(glm::vec4(0.2f, 0.2f, 0.2f, 1.f));
 		//Other update methods
 
+		BOG::AppScene::setGamePlay(m_mainWindow->m_evntMngr);
+
 		m_appRenderer->renderScene(m_appScene, dtime, m_mainWindow->m_evntMngr);
 
 		glfwSwapBuffers(m_mainWindow->getWindow());
@@ -110,7 +112,7 @@ namespace BOG {
 	void AppInit::checkEvent()
 	{
 		m_appScene->addTile(m_mainWindow->m_evntMngr);
-		m_appScene->selectEntity(m_mainWindow->m_evntMngr);
+		m_appScene->m_currentEntt = m_appScene->selectEntity(m_mainWindow->m_evntMngr);
 		glfwPollEvents();
 	}
 
