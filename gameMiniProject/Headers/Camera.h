@@ -46,7 +46,7 @@ namespace BOG {
 
 
 
-
+	extern glm::vec3 lerp(float alpha, const glm::vec3& a, const glm::vec3& b);
 	extern BOG::Camera *currentCam;
 }
 #endif //CAMERA_H

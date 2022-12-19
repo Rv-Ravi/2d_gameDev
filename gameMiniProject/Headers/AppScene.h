@@ -42,8 +42,12 @@ namespace BOG {
 		void rotateEntity(BOG::fltPoint dtime, EventManager*& evntMngr);
 		void entityCheckCollision(BOG::fltPoint dtime);
 		void addEnttComponent(EventManager*& evntMngr);
-	};
+		void addTag(EventManager*& evntMngr);
 
+		void mvPlayer(BOG::fltPoint dtime, EventManager*& evntMngr);
+	};
+	
+	extern BOG::fltPoint valLerp(BOG::fltPoint dtime, BOG::fltPoint val1, BOG::fltPoint val2);
 }
 
 

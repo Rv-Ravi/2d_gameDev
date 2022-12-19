@@ -121,7 +121,7 @@ void BOG::AppScene::scaleEntity(BOG::fltPoint dtime, EventManager*& evntMngr)
 	else if (evntMngr->getKeyStateAt(GLFW_KEY_S) == 1 && evntMngr->getKeyStateAt(GLFW_KEY_X) == 1
 		&& evntMngr->getKeyStateAt(GLFW_KEY_1) == 1)
 	{
-		comp->m_scale.x += dtime;
+		comp->m_scale.x += dtime * 5.f;
 	}
 	else if (evntMngr->getKeyStateAt(GLFW_KEY_S) == 1 && evntMngr->getKeyStateAt(GLFW_KEY_X) == 1
 		&& evntMngr->getKeyStateAt(GLFW_KEY_0) == 1)
@@ -161,7 +161,8 @@ void BOG::AppScene::entityCheckCollision(BOG::fltPoint dtime)
 				
 			if (&m_entityList[ent0] != &m_entityList[ent1] && BOG::PhysicsEng::boxCollision(m_entityList[ent0], m_entityList[ent1]))
 			{
-				//std::cout << m_entityList[ent0].m_enName << " Collided with " << m_entityList[ent1].m_enName << std::endl;
+				
+
 				collisonList.emplace_back(&m_entityList[ent0], &m_entityList[ent1]);
 
 			}
@@ -179,6 +180,54 @@ void BOG::AppScene::addEnttComponent(EventManager*& evntMngr)
 
 }
 
+void BOG::AppScene::addTag(EventManager*& evntMngr)
+{
+	if (evntMngr->getKeyStateAt(GLFW_KEY_LEFT_CONTROL) == 1 && evntMngr->getKeyStateAt(GLFW_KEY_T) == 1 &&
+		evntMngr->getKeyStateAt(GLFW_KEY_1) == 1 && !Entity::setPlayer)
+	{
+		Entity::setPlayer = true;
+		m_currentEntt->tagId = BOG::enTag::PLAYER;
+	}		
+	else if (evntMngr->getKeyStateAt(GLFW_KEY_LEFT_CONTROL) == 1 && evntMngr->getKeyStateAt(GLFW_KEY_T) == 1 &&
+		evntMngr->getKeyStateAt(GLFW_KEY_2) == 1)
+		m_currentEntt->tagId = BOG::enTag::TILE;
+	else if (evntMngr->getKeyStateAt(GLFW_KEY_LEFT_CONTROL) == 1 && evntMngr->getKeyStateAt(GLFW_KEY_T) == 1 &&
+		evntMngr->getKeyStateAt(GLFW_KEY_3) == 1)
+		m_currentEntt->tagId = BOG::enTag::ENEMIES;
+}
+
+void BOG::AppScene::mvPlayer(BOG::fltPoint dtime, EventManager*& evntMngr)
+{
+	auto player = std::find_if(m_entityList.begin(), m_entityList.end(), [&](Entity& val) {
+		return val.tagId == BOG::enTag::PLAYER;
+		});
+	if (player != m_entityList.end())
+	{
+		TransformComp* tComp = (TransformComp*)player->getComponent(BOG::compId::TRANSFORM);
+		ridgidBodyComp* rComp = (ridgidBodyComp*)player->getComponent(BOG::compId::RIDBODY);
+		rComp->m_speed = 5.5f; glm::vec3 direction(0.f, 1.f, 0.f);
+		if (evntMngr->getKeyStateAt(GLFW_KEY_RIGHT) == 1 && rComp->m_isGrounded)
+		{
+			rComp->m_velocity.x = valLerp(dtime, rComp->m_velocity.x,rComp->m_speed);
+		}
+		else if (evntMngr->getKeyStateAt(GLFW_KEY_LEFT) == 1 && rComp->m_isGrounded) {
+			rComp->m_velocity.x = valLerp(dtime, rComp->m_velocity.x, -rComp->m_speed);
+		}
+		else {
+			rComp->m_velocity.x = valLerp(dtime, rComp->m_velocity.x, 0.f);
+		}
+		if (evntMngr->getKeyStateAt(GLFW_KEY_SPACE) == 1 && rComp->m_isGrounded)
+		{
+			rComp->m_velocity.y = 6.0f;
+			rComp->m_isGrounded = false;
+		}
+		
+		tComp->m_position += rComp->m_velocity * dtime;
+
+	}
+
+}
+
 void BOG::AppScene::sceneUpdate(BOG::fltPoint dtime, EventManager*& evntMngr)
 {
 	if (!ms_gamePlay && m_currentEntt)
@@ -186,9 +235,16 @@ void BOG::AppScene::sceneUpdate(BOG::fltPoint dtime, EventManager*& evntMngr)
 		this->mvEntity(dtime, evntMngr);
 		this->scaleEntity(dtime, evntMngr);
 		this->addEnttComponent(evntMngr);
+		this->addTag(evntMngr);
 	}
 	else if (ms_gamePlay)
 	{
+		mvPlayer(dtime, evntMngr);
 		entityCheckCollision(dtime);
 	}
+}
+
+BOG::fltPoint BOG::valLerp(BOG::fltPoint dtime, BOG::fltPoint val1, BOG::fltPoint val2)
+{
+	return (val2 - val1) * dtime + val1;
 }

@@ -1,5 +1,7 @@
 #include "../Headers/PhysicsEng.h"
 
+bool BOG::Entity::setPlayer = false;
+
 BOG::PhysicsEng::PhysicsEng()
 {
 }
@@ -70,6 +72,9 @@ bool BOG::PhysicsEng::boxCollision(Entity& entity1, Entity& entity2)
 		return false;
 	}
 
-	EnRComp1->m_velocity = glm::vec3(0.f);
+
+
+	EnRComp1->m_velocity.y = 0.f;
+	EnRComp1->m_isGrounded = true;
 	return true;
 }
