@@ -209,6 +209,7 @@ void BOG::AppScene::mvPlayer(BOG::fltPoint dtime, EventManager*& evntMngr)
 		if (evntMngr->getKeyStateAt(GLFW_KEY_RIGHT) == 1 && rComp->m_isGrounded)
 		{
 			rComp->m_velocity.x = valLerp(dtime, rComp->m_velocity.x,rComp->m_speed);
+			
 		}
 		else if (evntMngr->getKeyStateAt(GLFW_KEY_LEFT) == 1 && rComp->m_isGrounded) {
 			rComp->m_velocity.x = valLerp(dtime, rComp->m_velocity.x, -rComp->m_speed);
@@ -216,13 +217,15 @@ void BOG::AppScene::mvPlayer(BOG::fltPoint dtime, EventManager*& evntMngr)
 		else {
 			rComp->m_velocity.x = valLerp(dtime, rComp->m_velocity.x, 0.f);
 		}
+		tComp->m_position.x += rComp->m_velocity.x * dtime;
 		if (evntMngr->getKeyStateAt(GLFW_KEY_SPACE) == 1 && rComp->m_isGrounded)
 		{
 			rComp->m_velocity.y = 6.0f;
 			rComp->m_isGrounded = false;
+			tComp->m_position.y += rComp->m_velocity.y * dtime;
 		}
 		
-		tComp->m_position += rComp->m_velocity * dtime;
+		
 
 	}
 
