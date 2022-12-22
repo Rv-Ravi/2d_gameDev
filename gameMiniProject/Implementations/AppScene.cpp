@@ -1,5 +1,6 @@
 #include "../Headers/AppScene.h"
 
+int32_t BOG::AppScene::m_ptsEarned = 0;
 
 bool BOG::AppScene::ms_gamePlay = false;
 
@@ -7,7 +8,7 @@ BOG::AppScene::AppScene()
 	:m_mainCamera({0.f,0.f,1.f}), tileMesh(BOG::square, BOG::squareIndex),
 	blockMesh(BOG::block, BOG::blockIndex)
 {
-	//this->addTile(nullptr);
+	
 }
 
 BOG::AppScene::~AppScene()
@@ -142,10 +143,12 @@ void BOG::AppScene::scaleEntity(BOG::fltPoint dtime, EventManager*& evntMngr)
 
 void BOG::AppScene::rotateEntity(BOG::fltPoint dtime, EventManager*& evntMngr)
 {
+
 }
 
 void BOG::AppScene::entityCheckCollision(BOG::fltPoint dtime)
 {
+	std::vector<uint16_t> rmEnttList;
 	std::vector<std::pair<Entity*, Entity*>> collisonList;
 	for (int ent0 = 0;ent0 < m_entityList.size();ent0++)
 	{	
@@ -161,11 +164,45 @@ void BOG::AppScene::entityCheckCollision(BOG::fltPoint dtime)
 				
 			if (&m_entityList[ent0] != &m_entityList[ent1] && BOG::PhysicsEng::boxCollision(m_entityList[ent0], m_entityList[ent1]))
 			{
+				ridgidBodyComp* rBody1 = (ridgidBodyComp*)m_entityList[ent1].m_enComponents[uint16_t(BOG::compId::RIDBODY)];
+				if (rBody && rBody1)
+				{
+					rBody->m_velocity.y = 0.f;
+					rBody->m_isGrounded = true;
+					rBody1->m_velocity.y = 0.f;
+					rBody1->m_isGrounded = true;
+					if (m_entityList[ent0].tagId != BOG::enTag::PLAYER)
+					{
+						rmEnttList.push_back(ent0);
+					}
+					else if (m_entityList[ent1].tagId != BOG::enTag::PLAYER)
+					{
+
+						rmEnttList.push_back(ent1);
+					}
+					m_ptsEarned++;
+				}
+				else if (rBody)
+				{
+					rBody->m_velocity.y = 0.f;
+					rBody->m_isGrounded = true;
+
+					if (m_entityList[ent0].tagId != BOG::enTag::PLAYER)
+					{
+						m_ptsEarned--;
+						rmEnttList.push_back(ent0);
+					}
+				}
 				
-
 				collisonList.emplace_back(&m_entityList[ent0], &m_entityList[ent1]);
-
 			}
+
+		}
+
+		for (uint16_t val : rmEnttList)
+		{
+			if(val < m_entityList.size())
+			m_entityList.erase(m_entityList.begin() + val);
 		}
 	}
 }
@@ -196,6 +233,12 @@ void BOG::AppScene::addTag(EventManager*& evntMngr)
 		m_currentEntt->tagId = BOG::enTag::ENEMIES;
 }
 
+void BOG::AppScene::removeEntt(uint16_t entityIndex)
+{
+	m_entityList.erase(m_entityList.begin() + entityIndex);
+
+}
+
 void BOG::AppScene::mvPlayer(BOG::fltPoint dtime, EventManager*& evntMngr)
 {
 	auto player = std::find_if(m_entityList.begin(), m_entityList.end(), [&](Entity& val) {
@@ -224,11 +267,35 @@ void BOG::AppScene::mvPlayer(BOG::fltPoint dtime, EventManager*& evntMngr)
 			rComp->m_isGrounded = false;
 			tComp->m_position.y += rComp->m_velocity.y * dtime;
 		}
-		
-		
+	}
+}
+
+void BOG::AppScene::blockFall()
+{
+	m_currentTime = glfwGetTime();
+	BOG::fltPoint timeDiff = m_currentTime - m_prevTime;
+	
+	if (timeDiff > 2.f)
+	{
+		std::srand(uint32_t(m_currentTime));
+		BOG::fltPoint rndPt = (std::rand() % 32) - 16.f;
+
+
+		std::stringstream ss;
+		ss << "Block-" << m_entityList.size();
+		m_entityList.emplace_back(ss.str().c_str());
+
+		auto last = m_entityList.end() - 1;
+		last->addComponent(new MeshComp(&tileMesh), compId::MESH);
+		last->addComponent(new TransformComp(glm::vec3(rndPt,11.f,0.f)), compId::TRANSFORM);
+		last->addComponent(new MaterialComp(glm::vec3(0.2f, 1.f, 0.2f)), compId::MATERIAL);
+		last->isMesh = true;
+		last->addComponent(new BoxBoundComp(), BOG::compId::BOUNDNGBOX);
+		last->addComponent(new ridgidBodyComp(), BOG::compId::RIDBODY);
+
+		m_prevTime = m_currentTime;
 
 	}
-
 }
 
 void BOG::AppScene::sceneUpdate(BOG::fltPoint dtime, EventManager*& evntMngr)
@@ -242,8 +309,11 @@ void BOG::AppScene::sceneUpdate(BOG::fltPoint dtime, EventManager*& evntMngr)
 	}
 	else if (ms_gamePlay)
 	{
+		blockFall();
 		mvPlayer(dtime, evntMngr);
 		entityCheckCollision(dtime);
+
+		std::cout << "Current match point is : " << m_ptsEarned << std::endl;
 	}
 }
 

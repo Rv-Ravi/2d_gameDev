@@ -63,18 +63,10 @@ bool BOG::PhysicsEng::boxCollision(Entity& entity1, Entity& entity2)
 
 	if (!(orgMin1.x >= orgMin2.x && orgMin1.x <= orgMax2.x) && 
 		!(orgMax1.x >= orgMin2.x && orgMax1.x <= orgMax2.x))
-	{
 		return false;
-	}
+
 	if (!(orgMin1.y >= orgMin2.y && orgMin1.y <= orgMax2.y) &&
 		!(orgMax1.y >= orgMin2.y && orgMax1.y <= orgMax2.y))
-	{
 		return false;
-	}
-
-
-
-	EnRComp1->m_velocity.y = 0.f;
-	EnRComp1->m_isGrounded = true;
 	return true;
 }

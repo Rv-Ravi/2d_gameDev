@@ -40,6 +40,12 @@ namespace BOG {
 		MeshComp(BOG::Mesh* mesh) {
 			m_mesh = mesh;
 		}
+
+	
+		~MeshComp()
+		{
+			delete m_mesh;
+		}
 	};
 
 	struct BoxBoundComp : public Component {
@@ -79,7 +85,7 @@ namespace BOG {
 			m_enComponents.fill(nullptr);
 		}
 		~Entity() {
-
+			m_enComponents.fill(nullptr);
 		}
 
 	//methods

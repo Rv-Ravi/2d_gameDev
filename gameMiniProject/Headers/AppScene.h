@@ -15,6 +15,8 @@ namespace BOG {
 		//members
 	private:
 		static bool ms_gamePlay;
+		BOG::fltPoint m_prevTime = 0.f; BOG::fltPoint m_currentTime = 0.f;
+		static int32_t m_ptsEarned;
 	public:
 		std::vector<Entity> m_entityList;
 		Camera m_mainCamera;
@@ -43,8 +45,10 @@ namespace BOG {
 		void entityCheckCollision(BOG::fltPoint dtime);
 		void addEnttComponent(EventManager*& evntMngr);
 		void addTag(EventManager*& evntMngr);
+		void removeEntt(uint16_t entityIndex);
 
 		void mvPlayer(BOG::fltPoint dtime, EventManager*& evntMngr);
+		void blockFall();
 	};
 	
 	extern BOG::fltPoint valLerp(BOG::fltPoint dtime, BOG::fltPoint val1, BOG::fltPoint val2);
