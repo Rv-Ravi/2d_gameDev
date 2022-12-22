@@ -1,5 +1,6 @@
 #include "../Headers/AppScene.h"
 
+int32_t BOG::AppScene::m_ptsEarned = 0;
 
 bool BOG::AppScene::ms_gamePlay = false;
 
@@ -7,7 +8,7 @@ BOG::AppScene::AppScene()
 	:m_mainCamera({0.f,0.f,1.f}), tileMesh(BOG::square, BOG::squareIndex),
 	blockMesh(BOG::block, BOG::blockIndex)
 {
-	//this->addTile(nullptr);
+	
 }
 
 BOG::AppScene::~AppScene()
@@ -121,7 +122,7 @@ void BOG::AppScene::scaleEntity(BOG::fltPoint dtime, EventManager*& evntMngr)
 	else if (evntMngr->getKeyStateAt(GLFW_KEY_S) == 1 && evntMngr->getKeyStateAt(GLFW_KEY_X) == 1
 		&& evntMngr->getKeyStateAt(GLFW_KEY_1) == 1)
 	{
-		comp->m_scale.x += dtime;
+		comp->m_scale.x += dtime * 5.f;
 	}
 	else if (evntMngr->getKeyStateAt(GLFW_KEY_S) == 1 && evntMngr->getKeyStateAt(GLFW_KEY_X) == 1
 		&& evntMngr->getKeyStateAt(GLFW_KEY_0) == 1)
@@ -142,10 +143,12 @@ void BOG::AppScene::scaleEntity(BOG::fltPoint dtime, EventManager*& evntMngr)
 
 void BOG::AppScene::rotateEntity(BOG::fltPoint dtime, EventManager*& evntMngr)
 {
+
 }
 
 void BOG::AppScene::entityCheckCollision(BOG::fltPoint dtime)
 {
+	std::vector<uint16_t> rmEnttList;
 	std::vector<std::pair<Entity*, Entity*>> collisonList;
 	for (int ent0 = 0;ent0 < m_entityList.size();ent0++)
 	{	
@@ -161,10 +164,45 @@ void BOG::AppScene::entityCheckCollision(BOG::fltPoint dtime)
 				
 			if (&m_entityList[ent0] != &m_entityList[ent1] && BOG::PhysicsEng::boxCollision(m_entityList[ent0], m_entityList[ent1]))
 			{
-				//std::cout << m_entityList[ent0].m_enName << " Collided with " << m_entityList[ent1].m_enName << std::endl;
-				collisonList.emplace_back(&m_entityList[ent0], &m_entityList[ent1]);
+				ridgidBodyComp* rBody1 = (ridgidBodyComp*)m_entityList[ent1].m_enComponents[uint16_t(BOG::compId::RIDBODY)];
+				if (rBody && rBody1)
+				{
+					rBody->m_velocity.y = 0.f;
+					rBody->m_isGrounded = true;
+					rBody1->m_velocity.y = 0.f;
+					rBody1->m_isGrounded = true;
+					if (m_entityList[ent0].tagId != BOG::enTag::PLAYER)
+					{
+						rmEnttList.push_back(ent0);
+					}
+					else if (m_entityList[ent1].tagId != BOG::enTag::PLAYER)
+					{
 
+						rmEnttList.push_back(ent1);
+					}
+					m_ptsEarned++;
+				}
+				else if (rBody)
+				{
+					rBody->m_velocity.y = 0.f;
+					rBody->m_isGrounded = true;
+
+					if (m_entityList[ent0].tagId != BOG::enTag::PLAYER)
+					{
+						m_ptsEarned--;
+						rmEnttList.push_back(ent0);
+					}
+				}
+				
+				collisonList.emplace_back(&m_entityList[ent0], &m_entityList[ent1]);
 			}
+
+		}
+
+		for (uint16_t val : rmEnttList)
+		{
+			if(val < m_entityList.size())
+			m_entityList.erase(m_entityList.begin() + val);
 		}
 	}
 }
@@ -179,6 +217,87 @@ void BOG::AppScene::addEnttComponent(EventManager*& evntMngr)
 
 }
 
+void BOG::AppScene::addTag(EventManager*& evntMngr)
+{
+	if (evntMngr->getKeyStateAt(GLFW_KEY_LEFT_CONTROL) == 1 && evntMngr->getKeyStateAt(GLFW_KEY_T) == 1 &&
+		evntMngr->getKeyStateAt(GLFW_KEY_1) == 1 && !Entity::setPlayer)
+	{
+		Entity::setPlayer = true;
+		m_currentEntt->tagId = BOG::enTag::PLAYER;
+	}		
+	else if (evntMngr->getKeyStateAt(GLFW_KEY_LEFT_CONTROL) == 1 && evntMngr->getKeyStateAt(GLFW_KEY_T) == 1 &&
+		evntMngr->getKeyStateAt(GLFW_KEY_2) == 1)
+		m_currentEntt->tagId = BOG::enTag::TILE;
+	else if (evntMngr->getKeyStateAt(GLFW_KEY_LEFT_CONTROL) == 1 && evntMngr->getKeyStateAt(GLFW_KEY_T) == 1 &&
+		evntMngr->getKeyStateAt(GLFW_KEY_3) == 1)
+		m_currentEntt->tagId = BOG::enTag::ENEMIES;
+}
+
+void BOG::AppScene::removeEntt(uint16_t entityIndex)
+{
+	m_entityList.erase(m_entityList.begin() + entityIndex);
+
+}
+
+void BOG::AppScene::mvPlayer(BOG::fltPoint dtime, EventManager*& evntMngr)
+{
+	auto player = std::find_if(m_entityList.begin(), m_entityList.end(), [&](Entity& val) {
+		return val.tagId == BOG::enTag::PLAYER;
+		});
+	if (player != m_entityList.end())
+	{
+		TransformComp* tComp = (TransformComp*)player->getComponent(BOG::compId::TRANSFORM);
+		ridgidBodyComp* rComp = (ridgidBodyComp*)player->getComponent(BOG::compId::RIDBODY);
+		rComp->m_speed = 5.5f; glm::vec3 direction(0.f, 1.f, 0.f);
+		if (evntMngr->getKeyStateAt(GLFW_KEY_RIGHT) == 1 && rComp->m_isGrounded)
+		{
+			rComp->m_velocity.x = valLerp(dtime, rComp->m_velocity.x,rComp->m_speed);
+			
+		}
+		else if (evntMngr->getKeyStateAt(GLFW_KEY_LEFT) == 1 && rComp->m_isGrounded) {
+			rComp->m_velocity.x = valLerp(dtime, rComp->m_velocity.x, -rComp->m_speed);
+		}
+		else {
+			rComp->m_velocity.x = valLerp(dtime, rComp->m_velocity.x, 0.f);
+		}
+		tComp->m_position.x += rComp->m_velocity.x * dtime;
+		if (evntMngr->getKeyStateAt(GLFW_KEY_SPACE) == 1 && rComp->m_isGrounded)
+		{
+			rComp->m_velocity.y = 6.0f;
+			rComp->m_isGrounded = false;
+			tComp->m_position.y += rComp->m_velocity.y * dtime;
+		}
+	}
+}
+
+void BOG::AppScene::blockFall()
+{
+	m_currentTime = glfwGetTime();
+	BOG::fltPoint timeDiff = m_currentTime - m_prevTime;
+	
+	if (timeDiff > 2.f)
+	{
+		std::srand(uint32_t(m_currentTime));
+		BOG::fltPoint rndPt = (std::rand() % 32) - 16.f;
+
+
+		std::stringstream ss;
+		ss << "Block-" << m_entityList.size();
+		m_entityList.emplace_back(ss.str().c_str());
+
+		auto last = m_entityList.end() - 1;
+		last->addComponent(new MeshComp(&tileMesh), compId::MESH);
+		last->addComponent(new TransformComp(glm::vec3(rndPt,11.f,0.f)), compId::TRANSFORM);
+		last->addComponent(new MaterialComp(glm::vec3(0.2f, 1.f, 0.2f)), compId::MATERIAL);
+		last->isMesh = true;
+		last->addComponent(new BoxBoundComp(), BOG::compId::BOUNDNGBOX);
+		last->addComponent(new ridgidBodyComp(), BOG::compId::RIDBODY);
+
+		m_prevTime = m_currentTime;
+
+	}
+}
+
 void BOG::AppScene::sceneUpdate(BOG::fltPoint dtime, EventManager*& evntMngr)
 {
 	if (!ms_gamePlay && m_currentEntt)
@@ -186,9 +305,19 @@ void BOG::AppScene::sceneUpdate(BOG::fltPoint dtime, EventManager*& evntMngr)
 		this->mvEntity(dtime, evntMngr);
 		this->scaleEntity(dtime, evntMngr);
 		this->addEnttComponent(evntMngr);
+		this->addTag(evntMngr);
 	}
 	else if (ms_gamePlay)
 	{
+		blockFall();
+		mvPlayer(dtime, evntMngr);
 		entityCheckCollision(dtime);
+
+		std::cout << "Current match point is : " << m_ptsEarned << std::endl;
 	}
+}
+
+BOG::fltPoint BOG::valLerp(BOG::fltPoint dtime, BOG::fltPoint val1, BOG::fltPoint val2)
+{
+	return (val2 - val1) * dtime + val1;
 }

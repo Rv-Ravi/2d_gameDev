@@ -7,7 +7,7 @@
 namespace BOG {
 
 	enum class enTag :uint16_t {
-		NONE = 0,PLAYER,TILE
+		NONE = 0,PLAYER,TILE,ENEMIES
 	};
 
 	enum class compId :uint16_t {
@@ -40,6 +40,12 @@ namespace BOG {
 		MeshComp(BOG::Mesh* mesh) {
 			m_mesh = mesh;
 		}
+
+	
+		~MeshComp()
+		{
+			delete m_mesh;
+		}
 	};
 
 	struct BoxBoundComp : public Component {
@@ -56,6 +62,7 @@ namespace BOG {
 		BOG::fltPoint m_mass = 1.f;
 		bool m_gravity = true;
 		bool m_isKinematic = false;
+		bool m_isGrounded = false;
 
 		BOG::fltPoint m_speed = 0.f;
 		glm::vec3 m_velocity = { 0.f,0.f,0.f };
@@ -70,6 +77,7 @@ namespace BOG {
 		std::array<Component*,6> m_enComponents;
 		enTag tagId = enTag::NONE;
 		bool isMesh = false;
+		static bool setPlayer;
 	//constructor
 	public:
 		Entity(const char* name = "Entity") {
@@ -77,7 +85,7 @@ namespace BOG {
 			m_enComponents.fill(nullptr);
 		}
 		~Entity() {
-
+			m_enComponents.fill(nullptr);
 		}
 
 	//methods
@@ -107,6 +115,7 @@ namespace BOG {
 		}
 	};
 
+	
 }
 
 
